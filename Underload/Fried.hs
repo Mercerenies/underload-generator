@@ -1,5 +1,5 @@
 
-module Underload.Fried() where
+module Underload.Fried(QCode(..), QInstruction(..), StackIndex) where
 
 -- Fried quotations, similar to Factor.
 
