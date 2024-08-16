@@ -2,7 +2,7 @@
 module Main where
 
 import Underload.Instruction
-import Underload.Util()
+import Underload.Fried()
 import Underload.Code
 import Underload.Number(pushNumber)
 import Underload.Builtins
