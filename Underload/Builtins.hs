@@ -3,8 +3,8 @@ module Underload.Builtins(branch, numToUnary,
                           mul, pow, add) where
 
 import Underload.Util(mpow)
-import Underload.Code(Code, pushLit, pushStr)
-import Underload.Instruction(dup, discard, eval, append, prepend, swap)
+import Underload.Code(Code, Reifiable, pushLit, pushStr)
+import Underload.Instruction(EmbedInstr, dup, discard, eval, append, prepend, swap)
 
 -- Stack effect: ( ..a n -- ..b ) assuming each branch has effect ( ..a -- ..b )
 --
@@ -28,15 +28,15 @@ numToUnary :: Char -> Code
 numToUnary ch = pushStr [ch] <> swap <> eval
 
 -- Stack effect: ( x y -- z )
-mul :: Code
+mul :: EmbedInstr a => a
 mul = append
 
 -- Stack effect: ( x y -- z )
-pow :: Code
+pow :: EmbedInstr a => a
 pow = eval
 
 -- Stack effect: ( x y -- z )
-add :: Code
+add :: (EmbedInstr a, Reifiable a, Monoid a) => a
 add = pushLit swap <> append <>
       pushLit dup <> prepend <>
       swap <> pushLit append <> append <> append

@@ -1,14 +1,14 @@
 
 module Underload.Number(pushNumber) where
 
-import Underload.Instruction(append, dup, discard)
-import Underload.Code(Code, nop, pushLit, pushEmptyLit)
+import Underload.Instruction(EmbedInstr, append, dup, discard)
+import Underload.Code(Reifiable, nop, pushLit, pushEmptyLit)
 import Underload.Util(mpow)
 
 -- Only supports a handful of small nonnegative integers right now.
 --
 -- Source: https://esolangs.org/wiki/Underload/Numbers
-pushNumber :: Int -> Code
+pushNumber :: (EmbedInstr a, Reifiable a, Monoid a) => Int -> a
 pushNumber n = pushLit (go n)
     where go 0 = discard <> pushEmptyLit
           go 1 = nop

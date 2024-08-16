@@ -1,5 +1,5 @@
 
-module Underload.Code(Code(..), pushLit, pushEmptyLit, pushStr,
+module Underload.Code(Code(..), Reifiable(..), pushEmptyLit, pushStr,
                       nop, liftCode) where
 
 import Underload.Instruction(Instruction(..), EmbedInstr(..), discard)
@@ -14,16 +14,21 @@ instance EmbedInstr Code where
 instance Show Code where
     showsPrec _ (Code code) = foldShows (map shows code)
 
-pushLit :: Code -> Code
-pushLit (Code instrs) = embedInstr $ PushLit instrs
+-- Class for code-like objects which can be reified as instructions
+-- which push themselves.
+class Reifiable a where
+    pushLit :: a -> a
 
-pushEmptyLit :: Code
+instance Reifiable Code where
+    pushLit (Code instrs) = embedInstr $ PushLit instrs
+
+pushEmptyLit :: (Reifiable a, Monoid a) => a
 pushEmptyLit = pushLit mempty
 
 pushStr :: String -> Code
 pushStr text = embedInstr $ PushStr text
 
-nop :: Code
+nop :: (Reifiable a, Monoid a, EmbedInstr a) => a
 nop = pushEmptyLit <> discard
 
 liftCode :: (Monoid a, EmbedInstr a) => Code -> a

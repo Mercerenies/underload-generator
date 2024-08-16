@@ -1,15 +1,15 @@
 
 module Underload.Combinators(dip, keep) where
 
-import Underload.Code(Code, pushLit)
-import Underload.Instruction(eval, prepend, enclose, dup)
+import Underload.Code(Reifiable, pushLit)
+import Underload.Instruction(EmbedInstr, eval, prepend, enclose, dup)
 
 -- Assuming argument code has stack effect ( ..a -- ..b ), the result
 -- has stack effect ( ..a x -- ..b x ).
-dip :: Code -> Code
+dip :: (EmbedInstr a, Reifiable a, Monoid a) => a -> a
 dip inner = enclose <> pushLit inner <> prepend <> eval
 
 -- Assuming argument code has stack effect ( ..a x -- ..b ), the result
 -- has stack effect ( ..a x -- ..b x ).
-keep :: Code -> Code
+keep :: (EmbedInstr a, Reifiable a, Monoid a) => a -> a
 keep inner = dup <> dip inner
