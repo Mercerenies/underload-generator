@@ -1,5 +1,5 @@
 
-module Underload.Code(Code(..), Reifiable(..), pushEmptyLit, pushStr,
+module Underload.Code(Code(..), Reifiable(..), pushEmptyLit,
                       nop, liftCode) where
 
 import Underload.Instruction(Instruction(..), EmbedInstr(..), discard)
@@ -24,9 +24,6 @@ instance Reifiable Code where
 
 pushEmptyLit :: (Reifiable a, Monoid a) => a
 pushEmptyLit = pushLit mempty
-
-pushStr :: String -> Code
-pushStr text = embedInstr $ PushStr text
 
 nop :: (Reifiable a, Monoid a, EmbedInstr a) => a
 nop = pushEmptyLit <> discard

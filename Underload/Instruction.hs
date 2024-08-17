@@ -1,7 +1,7 @@
 
 module Underload.Instruction(Instruction(..), EmbedInstr(..),
                              swap, dup, discard, append, enclose, eval,
-                             output, prepend) where
+                             output, prepend, pushStr) where
 
 import Underload.Util(foldShows)
 
@@ -59,3 +59,6 @@ output = embedInstr Output
 
 prepend :: (Semigroup a, EmbedInstr a) => a
 prepend = swap <> append
+
+pushStr :: EmbedInstr a => String -> a
+pushStr text = embedInstr $ PushStr text

@@ -3,8 +3,8 @@ module Underload.Builtins(branch, numToUnary,
                           mul, pow, add) where
 
 import Underload.Util(mpow)
-import Underload.Code(Code, Reifiable, pushLit, pushStr)
-import Underload.Instruction(EmbedInstr, dup, discard, eval, append, prepend, swap)
+import Underload.Code(Code, Reifiable, pushLit)
+import Underload.Instruction(EmbedInstr, dup, discard, eval, append, prepend, swap, pushStr)
 
 -- Stack effect: ( ..a n -- ..b ) assuming each branch has effect ( ..a -- ..b )
 --
