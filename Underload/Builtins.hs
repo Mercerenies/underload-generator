@@ -1,10 +1,13 @@
 
 module Underload.Builtins(branch, numToUnary,
-                          mul, pow, add) where
+                          mul, pow, add,
+                          finiteLoop) where
 
 import Underload.Util(mpow)
 import Underload.Code(Code, Reifiable, pushLit)
 import Underload.Instruction(EmbedInstr, dup, discard, eval, append, prepend, swap, pushStr)
+
+import Data.Foldable(fold)
 
 -- Stack effect: ( ..a n -- ..b ) assuming each branch has effect ( ..a -- ..b )
 --
@@ -40,3 +43,8 @@ add :: (EmbedInstr a, Reifiable a, Monoid a) => a
 add = pushLit swap <> append <>
       pushLit dup <> prepend <>
       swap <> pushLit append <> append <> append
+
+-- Finite loop with a known bound. Runs the loop body with stack
+-- effect ( ..a -- ..a ) n times.
+finiteLoop :: (EmbedInstr a, Reifiable a, Monoid a) => Int -> a -> a
+finiteLoop n c = fold $ replicate n c

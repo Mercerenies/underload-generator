@@ -14,5 +14,7 @@ main = do
           -- Naive addition
           pushNumber 3 <> pushNumber 8 <> add <> numToUnary 'x' <> output <>
           -- Fried addition
-          pushNumber 3 <> pushNumber 8 <> fry (pushStr "y" <> dup <> qref 1 <> swap <> qref 0 <> append) <> output
+          pushNumber 3 <> pushNumber 8 <> fry (pushStr "y" <> dup <> qref 1 <> swap <> qref 0 <> append) <> output <>
+          -- Test finiteLoop
+          finiteLoop 4 (pushStr "z" <> output)
   print code
