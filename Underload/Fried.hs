@@ -1,7 +1,10 @@
 
 module Underload.Fried(QCode(), QInstruction(), StackIndex, fry, fryLambda, qref) where
 
--- Fried quotations, similar to Factor.
+-- Fried quotations, similar to Factor. Note that, unlike Factor, we
+-- don't consume the lambda arguments in a fried quotation. It's a bit
+-- weird to do it that way, but it's easier in Underload. And I'll
+-- take anything "easy" I get.
 
 import Underload.Instruction(Instruction(..), EmbedInstr(..), enclose, append, eval)
 import Underload.Code(Code(..), pushLit, pushEmptyLit)
@@ -48,6 +51,24 @@ instance Semigroup QCode where
 instance Monoid QCode where
     mempty = QCode []
 
+{- -- We don't use this right now, since we always use the naive frying algorithm.
+getQRefs :: QCode -> [StackIndex]
+getQRefs (QCode xs) = concatMap go xs
+    where go (QGround _) = []
+          go (QPushLit qinstrs) = concatMap go qinstrs
+          go (QRef index) = [index]
+
+-- Returns true if the list is of the form [m, m - 1, m - 2, ..., 0].
+-- This is the eligibility condition for the ordered fry algorithm.
+isOrderedDecreasing :: [StackIndex] -> Bool
+isOrderedDecreasing [] = True
+isOrderedDecreasing [0] = True
+isOrderedDecreasing [_] = False
+isOrderedDecreasing (x:y:xs)
+    | x /= y + 1 = False
+    | otherwise = isOrderedDecreasing (y:xs)
+-}
+
 qref :: StackIndex -> QCode
 qref n = QCode [QRef n]
 
@@ -57,8 +78,7 @@ fry qcode = fryLambda qcode <> eval
 fryLambda :: QCode -> Code
 fryLambda (QCode instrs) = pushEmptyLit <> generalFry 1 instrs
 
--- General-purpose frying algorithm. Less efficient but works in all
--- cases.
+-- General-purpose frying algorithm.
 generalFry :: Int -> [QInstruction] -> Code
 generalFry extraStackValues = foldMap go
     where go (QGround instrs) = pushLit (Code instrs) <> append

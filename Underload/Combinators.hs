@@ -1,5 +1,5 @@
 
-module Underload.Combinators(dip, keep, dupToTop) where
+module Underload.Combinators(dip, dipN, keep, dupToTop) where
 
 import Underload.Code(Reifiable, pushLit)
 import Underload.Instruction(EmbedInstr, eval, prepend, enclose, dup, swap)
@@ -8,6 +8,9 @@ import Underload.Instruction(EmbedInstr, eval, prepend, enclose, dup, swap)
 -- has stack effect ( ..a x -- ..b x ).
 dip :: (EmbedInstr a, Reifiable a, Monoid a) => a -> a
 dip inner = enclose <> pushLit inner <> prepend <> eval
+
+dipN :: (EmbedInstr a, Reifiable a, Monoid a) => Int -> a -> a
+dipN n = foldr (.) id $ replicate n dip
 
 -- Assuming argument code has stack effect ( ..a x -- ..b ), the result
 -- has stack effect ( ..a x -- ..b x ).
