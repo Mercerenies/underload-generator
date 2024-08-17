@@ -7,7 +7,7 @@ module Underload.Fried(QCode(), QInstruction(), StackIndex, fry, fryLambda, qref
 -- take anything "easy" I get.
 
 import Underload.Instruction(Instruction(..), EmbedInstr(..), enclose, append, eval)
-import Underload.Code(Code(..), pushLit, pushEmptyLit)
+import Underload.Code(Code(..), Reifiable, pushLit, pushEmptyLit)
 import Underload.Util(foldShows)
 import Underload.Combinators(dupToTop)
 
@@ -35,6 +35,9 @@ instance EmbedInstr QInstruction where
 
 instance EmbedInstr QCode where
     embedInstr instr = QCode [embedInstr instr]
+
+instance Reifiable QCode where
+    pushLit (QCode qs) = QCode [QPushLit qs]
 
 instance Semigroup QCode where
     QCode xs <> QCode ys = QCode $ go xs ys
